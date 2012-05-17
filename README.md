@@ -189,3 +189,10 @@ function get_limit($limit, $offset = 0)
 -------------------------
 Returns up to 100 customers
 Limit is imposed by Stripe
+
+
+changelog
+=========
+2012-05-17
+Added stripe_plans.php (documentation to follow, but the functions are documented in the file)
+Fixed a bug in card in one of the functions.

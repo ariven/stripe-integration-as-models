@@ -87,9 +87,9 @@
 				return $ch;
 			} catch (Exception $e)
 			{
-				$this->error   = FALSE;
+				$this->error   = TRUE;
 				$this->message = $e->getMessage();
-				$this->code      = $e->getCode();
+				$this->code    = $e->getCode();
 				return FALSE;
 			}
 		}

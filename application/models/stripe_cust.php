@@ -254,7 +254,58 @@
 		{
 			return $this->get_all($limit, $offset);
 		}
-		// get_limit
 
 
-	}// class stripe
+		/**
+		 * @param $customer stripe customer token
+		 * @param $plan     name of the plan at Stripe
+		 */
+		function update_subscription($customer, $plan)
+		{
+			$this->load->model('stripe_cust');
+			$cust = $this->stripe_cust->get($customer);
+			if (!$cust)
+			{
+				$this->message = 'Customer not found';
+				return FALSE;
+			}
+			try
+			{
+				$plan_object = $cust->updateSubscription(array('plan' => $plan));
+			} catch (Exception $e)
+			{
+				$this->error   = TRUE;
+				$this->message = $e->getMessage();
+				$this->code    = $e->getCode();
+				return FALSE;
+			}
+			return $plan_object;
+		}
+
+		/**
+		 * @param $customer    customer token
+		 * @param bool $at_end if TRUE, cancels occur at end of billing period
+		 */
+		function cancel_subscription($customer, $at_end = TRUE)
+		{
+			$this->load->model('stripe_cust');
+			$cust = $this->stripe_cust->get($customer);
+			if (!$cust)
+			{
+				$this->message = 'Customer not found';
+				return FALSE;
+			}
+			try
+			{
+				$plan_object = $cust->cancelSubscription(array('at_period_end' => $at_end));
+			} catch (Exception $e)
+			{
+				$this->error   = TRUE;
+				$this->message = $e->getMessage();
+				$this->code    = $e->getCode();
+				return FALSE;
+			}
+			return $plan_object;
+		}
+
+	}
