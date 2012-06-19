@@ -3,7 +3,7 @@
 	/**
 	 * assumes latest Stripe api library is installed in APPPATH.'third_party'
 	 */
-	require_once(APPPATH . 'third_party/Stripe.php');
+	require_once(APPPATH . 'third_party/stripe.php');
 
 	class Stripe_trans extends CI_Model
 	{
@@ -87,6 +87,38 @@
 				$data['data'] = $raw_data;
 				return $data;
 			} catch (Exception $e)
+			{
+				$this->error   = TRUE;
+				$this->message = $e->getMessage();
+				$this->code    = $e->getCode();
+				return FALSE;
+			}
+		}
+
+		public function get_all_customer($customer, $num_charges = 10, $offset = 0)
+		{
+			try
+			{
+				$ch       = Stripe_Charge::all(array(
+													'count'    => $num_charges,
+													'offset'   => $offset,
+													'customer' => $customer
+											   ));
+				$raw_data = array();
+				foreach ($ch->data as $record)
+				{
+					$raw_data[] = $record;
+				}
+				if (count($raw_data) > 0)
+				{
+					return $raw_data;
+				}
+				else
+				{
+					return FALSE;
+				}
+			}
+			catch (Exception $e)
 			{
 				$this->error   = TRUE;
 				$this->message = $e->getMessage();

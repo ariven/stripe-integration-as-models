@@ -3,7 +3,7 @@
 	/**
 	 * assumes latest Stripe api library is installed in APPPATH.'third_party'
 	 */
-	require_once(APPPATH . 'third_party/Stripe.php');
+	require_once(APPPATH . 'third_party/stripe.php');
 
 	class Stripe_cust extends CI_Model
 	{
@@ -123,7 +123,7 @@
 			if (trim($customer_id) <> '')
 			{
 				$customer = $this->get($customer_id);
-				if ($customer['error'])
+				if (! $customer)
 				{
 					return $customer;
 				}
@@ -259,8 +259,9 @@
 		/**
 		 * @param $customer stripe customer token
 		 * @param $plan     name of the plan at Stripe
+		 * @param $prorate do we prorate on plan changes, by default no.  They only get a prorate when switching term interval
 		 */
-		function update_subscription($customer, $plan)
+		function update_subscription($customer, $plan, $prorate = FALSE)
 		{
 			$this->load->model('stripe_cust');
 			$cust = $this->stripe_cust->get($customer);
@@ -271,7 +272,7 @@
 			}
 			try
 			{
-				$plan_object = $cust->updateSubscription(array('plan' => $plan));
+				$plan_object = $cust->updateSubscription(array('plan' => $plan, 'prorate' => $prorate));
 			} catch (Exception $e)
 			{
 				$this->error   = TRUE;

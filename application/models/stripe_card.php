@@ -3,7 +3,7 @@
 	/**
 	 * assumes latest Stripe api library is installed in APPPATH.'third_party'
 	 */
-	require_once(APPPATH . 'third_party/Stripe.php');
+	require_once(APPPATH . 'third_party/stripe.php');
 
 	class Stripe_card extends CI_Model
 	{
@@ -100,10 +100,16 @@
 		 * @param type $card_info     array of number, exp_month, exp_year, cvc, name, address_line1,
 		 *                            address_line2, address_zip, address_state, address_country
 		 *                            only number, exp_month, exp_year are required
+		 *                            format:  array('card' => array('number', 'exp_month', 'exp_year', 'cvc', 'name'), '...');
 		 * @return type
 		 */
 		public function insert($card_info)
 		{
+			if (isset($card_info['number']))
+			{
+				// have to dereference the card array
+				$card_info = array('card' => $card_info);
+			}
 			try
 			{
 				$card = Stripe_Token::create($card_info);
@@ -137,4 +143,4 @@
 			return $ids;
 		}
 
-	}// class stripe
+	}
