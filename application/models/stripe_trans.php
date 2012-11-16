@@ -265,7 +265,7 @@
 			}
 			else
 			{
-				$this->error = 'TRUE';
+				$this->error = TRUE;
 				// message should be carried over from failure to retrieve transaction in the get() step
 				return FALSE;
 			}
